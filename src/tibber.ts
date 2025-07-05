@@ -3,6 +3,7 @@ import {TibberPricePlatform, TypedConfig} from './platform';
 import {IPrice} from 'tibber-api/lib/src/models/IPrice';
 import fs from 'fs';
 import {dateEq, dateHrEq, formatDate, fractionated} from './utils';
+import { HAPStorage } from 'hap-nodejs';
 
 export class CachedTibberClient {
 
@@ -18,7 +19,9 @@ export class CachedTibberClient {
     private readonly platform: TibberPricePlatform,
   ) {
     const config = platform.config as unknown as TypedConfig;
-    this.path = platform.api.user.storagePath() + '/tibber-price';
+    // Set custom storage path for Homebridge v2 compatibility
+    HAPStorage.setCustomStoragePath(platform.api.user.storagePath());
+    this.path = HAPStorage.storagePath() + '/tibber-price';
     this.cache = new Map();
     this.homeId = config.homeId;
     this.priceIncTax = config.priceIncTax;

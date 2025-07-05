@@ -3,6 +3,7 @@ import fs from 'fs';
 import {dateHrEq, padTo2Digits} from './utils';
 import axios from 'axios';
 import {CachedTibberClient} from './tibber';
+import { HAPStorage } from 'hap-nodejs';
 
 export class TibberGraphing {
 
@@ -17,7 +18,9 @@ export class TibberGraphing {
   constructor(
     private readonly platform: TibberPricePlatform,
   ) {
-    this.path = platform.api.user.storagePath() + '/tibber-price/price-chart.png';
+    // Set custom storage path for Homebridge v2 compatibility
+    HAPStorage.setCustomStoragePath(platform.api.user.storagePath());
+    this.path = HAPStorage.storagePath() + '/tibber-price/price-chart.png';
     this.lastRender = new Date(2022, 1, 1);
     this.tibber = platform.tibber!;
 
